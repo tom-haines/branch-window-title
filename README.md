@@ -1,5 +1,9 @@
-# Branch in Window Title 
+# Branch in Window Title
 
 Plugin to append current git branch, as available, into the window title of IDEA.
 
-Adapted from API calls in `mavenversion-plugin-master`.
+The plugin is available via the JetBrains plugin repository [https://plugins.jetbrains.com/plugin/9675-branch-in-window-title](https://plugins.jetbrains.com/plugin/9675-branch-in-window-title).
+
+# Acknowledgements
+
+With thanks to prior work in the `mavenversion-plugin`.
