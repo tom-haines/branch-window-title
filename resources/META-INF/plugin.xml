@@ -1,0 +1,28 @@
+<idea-plugin>
+    <id>io.wisetime.plugins.window.branch</id>
+    <name>Branch in Window Title</name>
+    <version>0.5.0</version>
+
+    <description><![CDATA[
+      Modifies the window title to include the current git branch ref in the window title.
+    ]]></description>
+
+    <change-notes><![CDATA[
+      Version 0.5.0 - Initial release.
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="145.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+
+    <application-components>
+        <component>
+            <implementation-class>io.wisetime.idea.branch.BranchNameComponent</implementation-class>
+        </component>
+    </application-components>
+
+</idea-plugin>
