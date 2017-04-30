@@ -1,10 +1,13 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.5.0</version>
+    <version>0.5.1</version>
+    <vendor>Thomas Haines</vendor>
 
     <description><![CDATA[
-      Modifies the window title to include the current git branch ref in the window title.
+      If a git repository is detected in the parent directory of a module, the current branch name is appended to the
+      project name in the window title. If no git repository is present, the default behaviour / project name is used.
+      This can be used to automate time allocation to ticketing systems via window managers such as WiseTime.
     ]]></description>
 
     <change-notes><![CDATA[
@@ -12,11 +15,8 @@
     ]]>
     </change-notes>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="145.0"/>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
     <depends>com.intellij.modules.lang</depends>
 
     <application-components>
