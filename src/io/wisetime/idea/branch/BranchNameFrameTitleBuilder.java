@@ -8,13 +8,17 @@ import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.FrameTitleBuilder;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,11 +29,16 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
   // static singleton of thread-safe Pattern object
   private static final Pattern FIRST_LINE_PATTERN = Pattern.compile("(ref: )?(.+)[\\r\\n]*");
 
+  private static final Pattern GIT_DIR_LINE_PATTERN = Pattern.compile("(gitdir: )?(.+)[\\r\\n]*");
+
   // maintains list of unique .git/HEAD file paths being watched
   private final Set<String> gitHeadFileWatchSet;
 
+  private final Map<String, String> gitHeadFile2ProjectName;
+
   public BranchNameFrameTitleBuilder() {
     gitHeadFileWatchSet = new HashSet<String>();
+    gitHeadFile2ProjectName = new HashMap<>();
   }
 
   static void setDefaultBuilder(FrameTitleBuilder defaultBuilder) {
@@ -37,17 +46,32 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
   }
 
   /**
-   * watch the root .git/HEAD for changes (if it exists)
+   * watch the root .git/HEAD or .git/worktrees/%worktree_name%/HEAD for changes (if it exists)
    *
    * @return gitHeadFile if exists or null otherwise.
    */
   private VirtualFile watchThisProject(Project project) {
-    VirtualFile gitDir = project.getBaseDir().findChild(".git");
-    if (gitDir != null) {
-      VirtualFile gitHeadSymRefFile = gitDir.findChild("HEAD");
-      if (gitHeadSymRefFile != null) {
-        registerFileChangedListener(gitHeadSymRefFile.getCanonicalPath());
-        return gitHeadSymRefFile;
+    VirtualFile gitFile = project.getBaseDir().findChild(".git");
+    if (gitFile != null) {
+      VirtualFile file = processGitFile(gitFile);
+      if (file != null) {
+        gitHeadFile2ProjectName.put(file.getCanonicalPath(), project.getName());
+      }
+      return file;
+    }
+    return null;
+  }
+
+  private VirtualFile processGitFile(VirtualFile gitFile) {
+    VirtualFile gitHeadSymRefFile = gitFile.findChild("HEAD");
+    if (gitHeadSymRefFile != null) {
+      registerFileChangedListener(gitHeadSymRefFile.getCanonicalPath());
+      return gitHeadSymRefFile;
+    } else {
+      // Try to check if git worktree is present
+      VirtualFile dirDir = determineGitDir(gitFile);
+      if (dirDir != null) {
+        return processGitFile(dirDir);
       }
     }
     return null;
@@ -128,6 +152,22 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
     return null;
   }
 
+  private VirtualFile determineGitDir(VirtualFile gitFile) {
+    try {
+      String gitFileAsString = new String(gitFile.contentsToByteArray(), Charset.forName("UTF-8"));
+      Matcher matcher = GIT_DIR_LINE_PATTERN.matcher(gitFileAsString);
+      if (matcher.find() && matcher.groupCount() >= 2) {
+        String gitDir = matcher.group(2).trim();
+        return LocalFileSystem.getInstance().findFileByPath(gitDir);
+      }
+    } catch (Exception e) {
+      // ignore
+    }
+
+    // could not determine git directory, returning null
+    return null;
+  }
+
   private void updateFrameTitle(Project project, String branchName) {
     if (project != null) {
       String projectTitle = createProjectTitle(project, branchName);
@@ -139,14 +179,18 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
    * Look through all open projects and see if git head symlink file is contained in it.
    */
   private Project getProjectForFile(VirtualFile gitHeadFile) {
-    //
+    String gitHeadFilePath = gitHeadFile.getCanonicalPath();
     for (Project project : ProjectManager.getInstance().getOpenProjects()) {
       try {
         VirtualFile[] contentRootArray = ProjectRootManager.getInstance(project).getContentRoots();
         for (VirtualFile virtualFile : contentRootArray) {
           String expectedLoc = virtualFile.getCanonicalPath() + "/.git/HEAD";
-          if (expectedLoc.equals(gitHeadFile.getCanonicalPath())) {
+          if (expectedLoc.equals(gitHeadFilePath)) {
             return project;
+          } else if (gitHeadFile2ProjectName.containsKey(gitHeadFilePath)) {
+            if (gitHeadFile2ProjectName.get(gitHeadFilePath).equals(project.getName())) {
+              return project;
+            }
           }
         }
       } catch (Exception e) {
