@@ -1,34 +1,41 @@
 package io.wisetime.idea.branch;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.BaseComponent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.wm.impl.FrameTitleBuilder;
+import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
 
 import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoContainer;
 
-public class BranchNameComponent implements ApplicationComponent {
-
-  public static final String FRAME_TITLE_BUILDER = "com.intellij.openapi.wm.impl.FrameTitleBuilder";
+/**
+ * The default intellij implementation of {@link FrameTitleBuilder} is {@link PlatformFrameTitleBuilder}.  This component
+ * overrides {@link FrameTitleBuilder} with plugin implementation {@link BranchNameFrameTitleBuilder}.
+ */
+public class BranchNameComponent implements BaseComponent {
+  private final Logger logger = Logger.getInstance("BranchNameComponent");
 
   @Override
   public void initComponent() {
-    MutablePicoContainer picoContainer = (MutablePicoContainer) ApplicationManager.getApplication().getPicoContainer();
-    BranchNameFrameTitleBuilder.setDefaultBuilder(
-        (FrameTitleBuilder) picoContainer.getComponentInstance(FRAME_TITLE_BUILDER)
-    );
+    PicoContainer picoContainerObj = getPicoContainer();
+    if (picoContainerObj instanceof MutablePicoContainer) {
+      MutablePicoContainer picoContainer = (MutablePicoContainer) picoContainerObj;
+      BranchNameFrameTitleBuilder.setDefaultBuilder(
+          (FrameTitleBuilder) picoContainer.getComponentInstance(FrameTitleBuilder.class.getName())
+      );
 
-    picoContainer.unregisterComponent(FRAME_TITLE_BUILDER);
-    picoContainer.registerComponentImplementation(FRAME_TITLE_BUILDER, BranchNameFrameTitleBuilder.class);
-  }
-
-  @Override
-  public void disposeComponent() {
+      picoContainer.unregisterComponent(FrameTitleBuilder.class.getName());
+      picoContainer.registerComponentImplementation(FrameTitleBuilder.class.getName(), BranchNameFrameTitleBuilder.class);
+    } else {
+      logger.warn("unable to obtain MutablePicoContainer");
+    }
   }
 
   @NotNull
-  @Override
-  public String getComponentName() {
-    return getClass().getSimpleName();
+  protected PicoContainer getPicoContainer() {
+    return ApplicationManager.getApplication().getPicoContainer();
   }
+
 }
