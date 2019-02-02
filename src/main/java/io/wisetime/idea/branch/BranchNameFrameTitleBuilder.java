@@ -182,12 +182,13 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
         String gitDir = matcher.group(2).trim();
         return LocalFileSystem.getInstance().findFileByPath(gitDir);
       }
+      if (logger.isDebugEnabled()) {
+        logger.debug("no worktree ref from {}", gitFile);
+      }
     } catch (Exception e) {
-      logger.debug(e.getMessage(), e);
-    }
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("no worktree ref from {}", gitFile);
+      if (logger.isDebugEnabled()) {
+        logger.debug("{} {}", e.getMessage(), gitFile, e);
+      }
     }
     return null;
   }
