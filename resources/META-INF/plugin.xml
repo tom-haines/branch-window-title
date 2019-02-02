@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.5.2</version>
+    <version>0.5.3</version>
     <vendor>Thomas Haines</vendor>
 
     <description><![CDATA[
@@ -11,6 +11,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      Version 0.5.3 - Added git worktrees support.
       Version 0.5.2 - Improved description and docs.
       Version 0.5.0 - Initial release.
     ]]>
