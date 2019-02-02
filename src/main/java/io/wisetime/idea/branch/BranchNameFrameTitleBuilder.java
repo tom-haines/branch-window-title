@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.FrameTitleBuilder;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
@@ -161,7 +162,7 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       }
     }
 
-    // could not determine branch name, returning null
+    logger.debug("could not determine branch name, returning null");
     return null;
   }
 
@@ -177,15 +178,27 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       logger.debug(e.getMessage(), e);
     }
 
-    // could not determine git directory, returning null
+    if (logger.isDebugEnabled()) {
+      logger.debug("no worktree ref from {}", gitFile);
+    }
     return null;
   }
 
   private void updateFrameTitle(Project project, String branchName) {
-    if (project != null) {
-      String projectTitle = createProjectTitle(project, branchName);
-      ((IdeFrameImpl) WindowManager.getInstance().getIdeFrame(project)).setTitle(projectTitle);
+    if (project == null) {
+      logger.debug("no project provided to updateFrameTitle");
+      return;
     }
+
+    final String projectTitle = createProjectTitle(project, branchName);
+
+    IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
+    if (ideFrame instanceof IdeFrameImpl) {
+      ((IdeFrameImpl) ideFrame).setTitle(projectTitle);
+    } else {
+      logger.info("unable to obtain mutable IdeFrame");
+    }
+
   }
 
   /**
@@ -207,8 +220,13 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
           }
         }
       } catch (Exception e) {
-        logger.debug(e.getMessage(), e);
+        if (logger.isDebugEnabled()) {
+          logger.debug(e.getMessage(), e);
+        }
       }
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("unable to obtain project from file {}", gitHeadFile);
     }
     return null;
   }
