@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.jetbrains.intellij' version '0.4.2'
+}
+
+group 'org.jetbrains'
+version '0.5.3-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.21.0'
+    testCompile 'org.assertj:assertj-core:3.10.0'
+}
+
+intellij {
+    // IntelliJ IDEA releases: https://www.jetbrains.com/intellij-repository/releases
+    version 'IC-2018.3'
+    plugins = [ 'coverage' ]
+    pluginName 'Branch in Window Title'
+    downloadSources = true
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}

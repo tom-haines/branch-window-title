@@ -4,3 +4,6 @@
 **/.DS_Store
 out
 *.jar
+.gradle
+.idea
+build
