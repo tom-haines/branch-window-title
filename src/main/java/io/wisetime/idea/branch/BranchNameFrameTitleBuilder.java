@@ -100,9 +100,17 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
         @Override
         public void contentsChanged(@NotNull VirtualFileEvent event) {
-          if (gitHeadFilePath.equals(event.getFile().getCanonicalPath())) {
-            final String branchName = determineBranchName(event.getFile());
-            updateFrameTitle(getProjectForFile(event.getFile()), branchName);
+          final VirtualFile eventFile = event.getFile();
+          if (gitHeadFilePath.equals(eventFile.getCanonicalPath())) {
+            final String branchName = determineBranchName(eventFile);
+            Project projectFromFile = getProjectForFile(eventFile);
+            if (projectFromFile != null) {
+              updateFrameTitle(projectFromFile, branchName);
+            } else {
+              if (logger.isDebugEnabled()) {
+                logger.debug("unable to determine project from file {}", eventFile);
+              }
+            }
           }
         }
       });
