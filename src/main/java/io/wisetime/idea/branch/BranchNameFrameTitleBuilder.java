@@ -120,7 +120,7 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       VirtualFile headFile = watchThisProject(project);
       branchName = determineBranchName(headFile);
     } catch (Exception e) {
-      // ignore...
+      logger.debug(e.getMessage(), e);
     }
     return createProjectTitle(project, branchName);
   }
@@ -157,7 +157,7 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
           return branchName;
         }
       } catch (Exception e) {
-        // ignore
+        logger.debug(e.getMessage(), e);
       }
     }
 
@@ -207,7 +207,7 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
           }
         }
       } catch (Exception e) {
-        // ignore
+        logger.debug(e.getMessage(), e);
       }
     }
     return null;
