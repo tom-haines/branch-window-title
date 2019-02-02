@@ -1,7 +1,6 @@
 package io.wisetime.idea.branch;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.picocontainer.MutablePicoContainer;
@@ -11,22 +10,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 /**
- * @author thomas.haines@practiceinsight.io
+ * @author thomas.haines
  */
 public class BranchNameComponentTest {
-  private BranchNameComponent component;
-  private MutablePicoContainer mutablePicoContainer;
-
-  @Before
-  public void setUp() {
-    BranchNameComponentMock extendedComponent = new BranchNameComponentMock();
-    this.component = extendedComponent;
-    this.mutablePicoContainer = extendedComponent.getMutable();
-
-  }
 
   @Test
   public void initComponent() {
+    BranchNameComponentMock component = new BranchNameComponentMock();
+    MutablePicoContainer mutablePicoContainer = component.getMutable();
     component.initComponent();
     Mockito.verify(mutablePicoContainer, times(1)).unregisterComponent(anyString());
   }
