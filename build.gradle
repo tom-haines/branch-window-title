@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.jetbrains.intellij' version '0.4.2'
+    id 'org.jetbrains.intellij' version '0.4.14'
 }
 
 group 'org.jetbrains'
-version '0.5.3'
+version '0.5.4'
 
 repositories {
     mavenCentral()
@@ -18,10 +18,9 @@ dependencies {
 }
 
 intellij {
-    // IntelliJ IDEA releases: https://www.jetbrains.com/intellij-repository/releases
+    // IntelliJ IDEA releases: https://www.jetbrains.com/intellij-repository/releases e.g. IC-2019.3
     version 'IC-2018.3'
 
-    
     pluginName 'branch-window-title'
     // Disables updating since-build attribute in plugin.xml
     intellij.updateSinceUntilBuild false

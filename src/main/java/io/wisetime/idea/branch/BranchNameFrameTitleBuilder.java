@@ -7,28 +7,30 @@ import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.newvfs.BulkFileListener;
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.FrameTitleBuilder;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
-
-import org.jetbrains.annotations.NotNull;
-
+import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
+import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 
 public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
-  private static FrameTitleBuilder defaultBuilder;
+
+  private static FrameTitleBuilder defaultBuilder = new PlatformFrameTitleBuilder();
 
   // static singleton of thread-safe Pattern object
   private static final Pattern FIRST_LINE_PATTERN = Pattern.compile("(ref: )?(.+)[\\r\\n]*");
@@ -68,47 +70,50 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       return null;
     }
 
-    VirtualFile file = findGitHeadFile(gitRepoRootDir.get());
+    VirtualFile file = findGitHeadFile(gitRepoRootDir.get(), project);
     if (file != null) {
       gitHeadFile2ProjectName.put(file.getCanonicalPath(), project.getName());
     }
     return file;
   }
 
-  private VirtualFile findGitHeadFile(VirtualFile gitParentDir) {
+  private VirtualFile findGitHeadFile(VirtualFile gitParentDir, Project project) {
     VirtualFile gitHeadSymRefFile = gitParentDir.findChild("HEAD");
     if (gitHeadSymRefFile != null) {
-      registerFileChangedListener(gitHeadSymRefFile.getCanonicalPath());
+      registerFileChangedListener(gitHeadSymRefFile.getPath(), project);
       return gitHeadSymRefFile;
     }
 
     // check if git worktree is present
     VirtualFile worktreeLinkedDir = checkWorktreeLink(gitParentDir);
     if (worktreeLinkedDir != null && !gitParentDir.equals(worktreeLinkedDir)) {
-      return findGitHeadFile(worktreeLinkedDir);
+      return findGitHeadFile(worktreeLinkedDir, project);
     }
 
     return null;
   }
 
   /**
-   * Maintain watch on gitHeadFile via {@link VirtualFileManager#addVirtualFileListener(VirtualFileListener)}.
+   * Maintain watch on gitHeadFile via {@link MessageBusConnection}.
    */
-  private void registerFileChangedListener(final String gitHeadFilePath) {
+  private void registerFileChangedListener(final String gitHeadFilePath, Project project) {
     if (!gitHeadFileWatchSet.contains(gitHeadFilePath)) {
       gitHeadFileWatchSet.add(gitHeadFilePath);
-      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
-        @Override
-        public void contentsChanged(@NotNull VirtualFileEvent event) {
-          final VirtualFile eventFile = event.getFile();
-          if (gitHeadFilePath.equals(eventFile.getCanonicalPath())) {
-            final String branchName = determineBranchName(eventFile);
-            Project projectFromFile = getProjectForFile(eventFile);
-            if (projectFromFile != null) {
-              updateFrameTitle(projectFromFile, branchName);
-            } else {
-              if (logger.isDebugEnabled()) {
-                logger.debug("unable to determine project from file {}", eventFile);
+      MessageBus messageBus = project.getMessageBus();
+      MessageBusConnection connection = messageBus.connect();
+      connection.subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+        public void after(@NotNull List<? extends VFileEvent> events) {
+          for (VFileEvent event : events) {
+            final VirtualFile eventFile = event.getFile();
+            if (eventFile != null && gitHeadFilePath.equals(eventFile.getPath())) {
+              final String branchName = determineBranchName(eventFile);
+              Project projectFromFile = getProjectForFile(eventFile);
+              if (projectFromFile != null) {
+                updateFrameTitle(projectFromFile, branchName);
+              } else {
+                if (logger.isDebugEnabled()) {
+                  logger.debug("unable to determine project from file {}", eventFile);
+                }
               }
             }
           }
@@ -200,14 +205,12 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
     }
 
     final String projectTitle = createProjectTitle(project, branchName);
-
-    IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
-    if (ideFrame instanceof IdeFrameImpl) {
-      ((IdeFrameImpl) ideFrame).setTitle(projectTitle);
+    IdeFrame ideFrame = WindowManagerEx.getInstanceEx().findFrameFor(project);
+    if (ideFrame != null) {
+      ideFrame.setFrameTitle(projectTitle);
     } else {
-      logger.info("unable to obtain mutable IdeFrame");
+      logger.info("unable to obtain IdeFrame (WindowManager returned null ideFrame)");
     }
-
   }
 
   /**
