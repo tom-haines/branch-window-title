@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.FrameTitleBuilder;
 import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
@@ -205,7 +206,7 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
     }
 
     final String projectTitle = createProjectTitle(project, branchName);
-    IdeFrame ideFrame = WindowManagerEx.getInstanceEx().findFrameFor(project);
+    IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
     if (ideFrame != null) {
       ideFrame.setFrameTitle(projectTitle);
     } else {
