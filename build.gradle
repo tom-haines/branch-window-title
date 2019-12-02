@@ -34,4 +34,6 @@ tasks.withType(JavaCompile) {
 
 publishPlugin {
     token intellijPublishToken
+    username intellijPublishUsername
+    channels 'stable'
 }
