@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.5.3</version>
+    <version>0.5.4</version>
     <vendor>Thomas Haines</vendor>
 
     <description><![CDATA[
@@ -11,6 +11,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      Version 0.5.4 - Fix regression from api change in IntelliJ 2019.4+
       Version 0.5.3 - Added git worktrees support.
       Version 0.5.2 - Improved description and docs.
       Version 0.5.0 - Initial release.
@@ -21,10 +22,10 @@
 
     <depends>com.intellij.modules.lang</depends>
 
-    <application-components>
-        <component>
-            <implementation-class>io.wisetime.idea.branch.BranchNameComponent</implementation-class>
-        </component>
-    </application-components>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="com.intellij.openapi.wm.impl.FrameTitleBuilder"
+          serviceImplementation="io.wisetime.idea.branch.BranchNameFrameTitleBuilder"
+          overrides="true"/>
+    </extensions>
 
 </idea-plugin>
