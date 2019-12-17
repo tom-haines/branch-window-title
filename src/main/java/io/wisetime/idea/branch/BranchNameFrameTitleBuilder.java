@@ -59,14 +59,18 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
    * @return gitHeadFile if exists or null otherwise.
    */
   private VirtualFile watchThisProject(Project project) {
-    final Optional<VirtualFile> gitRepoRootDir = Stream.of(Optional.ofNullable(ProjectUtil.guessProjectDir(project)))
+    final VirtualFile guessedProjectDir = ProjectUtil.guessProjectDir(project);
+    final Optional<VirtualFile> gitRepoRootDir = Stream.of(Optional.ofNullable(guessedProjectDir))
         .filter(Optional::isPresent)
-        .map(projectDirOpt -> Optional.ofNullable(projectDirOpt.get().findChild(".git")))
+        .map(Optional::get)
+        .map(projectDir -> Optional.ofNullable(projectDir.findChild(".git")))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .findFirst();
+
     if (!gitRepoRootDir.isPresent()) {
-      logger.debug("No git repository found");
+      final String logMsg = createLogMsg(guessedProjectDir);
+      logger.debug(logMsg);
       return null;
     }
 
@@ -75,6 +79,18 @@ public class BranchNameFrameTitleBuilder extends FrameTitleBuilder {
       gitHeadFile2ProjectName.put(file.getCanonicalPath(), project.getName());
     }
     return file;
+  }
+
+  @NotNull
+  static String createLogMsg(VirtualFile guessedProjectDir) {
+    StringBuilder msg = new StringBuilder("No git repository found in search path: [");
+    if (guessedProjectDir == null) {
+      msg.append("none");
+    } else {
+      msg.append(guessedProjectDir.getPath());
+    }
+    msg.append("]");
+    return msg.toString();
   }
 
   private VirtualFile findGitHeadFile(VirtualFile gitParentDir, Project project) {

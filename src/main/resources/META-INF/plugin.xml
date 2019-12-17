@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.5.4</version>
+    <version>0.5.5</version>
     <vendor>Thomas Haines</vendor>
 
     <description><![CDATA[
@@ -11,6 +11,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      Version 0.5.5 - Improve logging output in event no git repository is located in project.
       Version 0.5.4 - Fix regression from api change in IntelliJ 2019.4+
       Version 0.5.3 - Added git worktrees support.
       Version 0.5.2 - Improved description and docs.
@@ -18,7 +19,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="171.0"/>
+    <idea-version since-build="172.2103.15"/>
 
     <depends>com.intellij.modules.lang</depends>
 
