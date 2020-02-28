@@ -6,7 +6,7 @@ plugins {
 
 group 'org.jetbrains'
 
-version '0.5.5'
+version '0.6.0'
 
 repositories {
     mavenCentral()
@@ -26,15 +26,10 @@ intellij {
     // Disables updating since-build attribute in plugin.xml
     intellij.updateSinceUntilBuild false
     downloadSources = true
+    plugins 'git4idea', 'svn4idea'
 }
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << '-Xlint:unchecked'
     options.deprecation = true
-}
-
-publishPlugin {
-    token intellijPublishToken
-    username intellijPublishUsername
-    channels 'stable'
 }

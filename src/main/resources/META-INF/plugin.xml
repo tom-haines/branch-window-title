@@ -1,8 +1,8 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.5.5</version>
-    <vendor>Thomas Haines</vendor>
+    <version>0.6.0</version>
+    <vendor>WiseTime</vendor>
 
     <description><![CDATA[
       If a git repository is detected in the parent directory of a module, the current branch name is appended to the
@@ -11,6 +11,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      Version 0.6.0 - Improve stability with IntelliJ 2019.3.3+, Subversion support.
       Version 0.5.5 - Improve logging output in event no git repository is located in project.
       Version 0.5.4 - Fix regression from api change in IntelliJ 2019.4+
       Version 0.5.3 - Added git worktrees support.
@@ -22,11 +23,14 @@
     <idea-version since-build="172.2103.15"/>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="git-extension.xml">Git4Idea</depends>
+    <depends optional="true" config-file="subversion-extension.xml">Subversion</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceInterface="com.intellij.openapi.wm.impl.FrameTitleBuilder"
-          serviceImplementation="io.wisetime.idea.branch.BranchNameFrameTitleBuilder"
-          overrides="true"/>
+          serviceImplementation="io.wisetime.idea.branch.WisetimeFrameTitleManager" overrides="true" />
+
+        <projectService serviceImplementation="io.wisetime.idea.branch.BranchHelper" />
     </extensions>
 
 </idea-plugin>
