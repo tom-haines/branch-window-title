@@ -1,8 +1,8 @@
 # Branch in Window Title
 
-Plugin to append current git, svn branch, if available, into the window title of IDEA.
+Plugin to append current Git or Subversion branch, if available, into the window title of IntelliJ IDEA -based IDEs.
 
-The plugin is available via the JetBrains plugin repository [https://plugins.jetbrains.com/plugin/9675-branch-in-window-title](https://plugins.jetbrains.com/plugin/9675-branch-in-window-title).
+The plugin is available via the JetBrains plugin repository: [https://plugins.jetbrains.com/plugin/9675-branch-in-window-title](https://plugins.jetbrains.com/plugin/9675-branch-in-window-title).
 
 ![Git Branch](doc/resources/git-screenshot.png)
 
@@ -11,10 +11,6 @@ The plugin is available via the JetBrains plugin repository [https://plugins.jet
 ## Automated Timekeeping for Development Teams
 
 Branch in Window Title can be used to automate time allocation to issue tracking systems via [WiseTime](https://wisetime.com). Our engineering team uses Jira, and this is how it fits into our development workflow at WiseTime.
-
-<p align="center">
-  <img width="206" height="300" src="doc/resources/keep-calm-and-flow-on.png">
-</p>
 
 ### Keep Calm and Flow on
 
@@ -28,11 +24,7 @@ I select the relevant repository, and choose to branch from master.
 
 By default, Bitbucket will add the Jira issue number to the branch name. If I can get this branch name into my window title, WiseTime will be able to automatically tag the time I spend in Visual Studio Code with the right issue. This is exactly what the Branch in Window Title extension allows me to do.
 
-I checkout the branch and open the project in VS Code.
-
-![Git Branch in VS Code Window Title](doc/resources/vscode-branch-in-window-title.png)
-
-While I work in VS Code, my activity starts showing up in my [private](https://wisetime.com/privacy-by-design/) timeline in the WiseTime console, tagged with the Jira issue number.
+I checkout the branch and open the project in IntelliJ IDEA. While I work in my IDE, my activity starts showing up in my [private](https://wisetime.com/privacy-by-design/) timeline in the WiseTime console, tagged with the Jira issue number.
 
 ![Time Automatically Tagged in WiseTime Console](doc/resources/wisetime-console.png)
 
@@ -48,10 +40,10 @@ The Jira Connector also watches Jira for new issues and automatically syncs them
 
 Not using Jira? We offer many other types of [Connectors](https://wisetime.com/connectors/), including [Zapier](https://wisetime.com/zapier/). We also provide the [WiseTime Connect API](https://wisetime.com/docs/connect/), as well as a [WiseTime Connector Java Library](https://github.com/wisetime-io/wisetime-connector-java) that wraps the API. With these, you can easily implement your own custom connector.
 
-## Using VS Code?
+## Using Visual Studio Code?
 
-We also have you covered if you use a Visual Studio Code. Check plugin [here](https://marketplace.visualstudio.com/items?itemName=wisetime.branch-in-window-title).
+We've also got you covered if you use Visual Studio Code. You can install the VS Code version of our extension from [the Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=wisetime.branch-in-window-title).
 
 ## Acknowledgements
 
-With thanks to prior work in the `mavenversion-plugin`.
+With thanks to prior work from the `mavenversion-plugin`.
