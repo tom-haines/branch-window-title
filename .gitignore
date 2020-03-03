@@ -8,3 +8,4 @@ out
 .idea
 build
 gradle.properties
+!gradle-wrapper.jar
