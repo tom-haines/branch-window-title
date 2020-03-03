@@ -20,6 +20,7 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
   String getProjectTitleWithBranch(Project project, String branchName) {
     String projectTitle = super.getProjectTitle(project);
     if (branchName != null && !branchName.isEmpty()) {
+      // if an existing title ends with context data inside square brackets, replace with the update updated branch title
       projectTitle = projectTitle.replaceAll("^(.*)\\[.*]$", "$1[" + branchName + "]");
     }
     return projectTitle;
