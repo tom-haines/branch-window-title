@@ -12,7 +12,8 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
   public String getProjectTitle(@NotNull Project project) {
     final String currentBranch = Optional.ofNullable(ServiceManager.getService(project, BranchHelper.class))
         .map(BranchHelper::getCurrentBranchName)
-        .orElse(null);
+        // return empty string if branch name is unavailable
+        .orElse("");
     return getProjectTitleWithBranch(project, currentBranch);
   }
 
