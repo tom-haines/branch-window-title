@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
+  /**
+   * Window title format pre IntelliJ IDEA 2020.1.
+   */
+  private static final String WINDOW_TITLE_BRACKETS_PATTERN = "^(.*)\\[.*]$";
+
   @Override
   public String getProjectTitle(@NotNull Project project) {
     final String currentBranch = Optional.ofNullable(ServiceManager.getService(project, BranchHelper.class))
@@ -20,8 +25,12 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
   String getProjectTitleWithBranch(Project project, String branchName) {
     String projectTitle = super.getProjectTitle(project);
     if (branchName != null && !branchName.isEmpty()) {
-      // if an existing title ends with context data inside square brackets, replace with the update updated branch title
-      projectTitle = projectTitle.replaceAll("^(.*)\\[.*]$", "$1[" + branchName + "]");
+      if (projectTitle.matches(WINDOW_TITLE_BRACKETS_PATTERN)) {
+        // if an existing title ends with context data inside square brackets, replace with the updated branch title
+        projectTitle = projectTitle.replaceAll(WINDOW_TITLE_BRACKETS_PATTERN, "$1[" + branchName + "]");
+      } else {
+        projectTitle += " – [" + branchName + "]";
+      }
     }
     return projectTitle;
   }
