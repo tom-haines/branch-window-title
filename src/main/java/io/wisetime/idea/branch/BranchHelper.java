@@ -1,6 +1,5 @@
 package io.wisetime.idea.branch;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.WindowManager;
@@ -28,7 +27,7 @@ public final class BranchHelper {
   }
 
   private void updateFrameTitle() {
-    final String projectTitle = ServiceManager.getService(FrameTitleBuilder.class)
+    final String projectTitle = project.getService(FrameTitleBuilder.class)
         .getProjectTitle(project);
     JFrame ideFrame = WindowManager.getInstance().getFrame(project);
     if (ideFrame != null) {

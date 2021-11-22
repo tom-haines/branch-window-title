@@ -1,6 +1,5 @@
 package io.wisetime.idea.branch;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
 import java.util.Optional;
@@ -15,7 +14,7 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
   @Override
   public String getProjectTitle(@NotNull Project project) {
-    final String currentBranch = Optional.ofNullable(ServiceManager.getService(project, BranchHelper.class))
+    final String currentBranch = Optional.ofNullable(project.getService(BranchHelper.class))
         .map(BranchHelper::getCurrentBranchName)
         // return empty string if branch name is unavailable
         .orElse("");
