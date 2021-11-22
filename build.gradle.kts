@@ -7,7 +7,7 @@ plugins {
 // TODO (TH) should be publisher company
 group = "org.jetbrains"
 
-version = "0.6.1"
+version = "0.6.2"
 
 repositories {
   mavenCentral()
