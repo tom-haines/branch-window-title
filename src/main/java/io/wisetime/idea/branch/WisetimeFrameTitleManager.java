@@ -2,6 +2,7 @@ package io.wisetime.idea.branch;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
+import io.wisetime.idea.branch.settings.SettingsState;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,9 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
   @Override
   public String getProjectTitle(@NotNull Project project) {
+    if (!SettingsState.getInstance().appendToWindowTitle) {
+      return super.getProjectTitle(project);
+    }
     final String currentBranch = Optional.ofNullable(project.getService(BranchHelper.class))
         .map(BranchHelper::getCurrentBranchName)
         // return empty string if branch name is unavailable
