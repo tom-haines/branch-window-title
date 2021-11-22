@@ -5,6 +5,10 @@ import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * To simplify QA on Windows, window title can be enabled:
+ * Help -> Edit Custom Properties -> ide.win.frame.decoration=false
+ */
 public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
   /**

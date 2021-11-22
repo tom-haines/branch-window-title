@@ -37,4 +37,5 @@ intellij {
 
 tasks.withType(JavaCompile::class.java) {
   options.isDeprecation = true
+  options.encoding = "UTF-8"
 }
