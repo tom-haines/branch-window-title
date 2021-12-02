@@ -1,6 +1,5 @@
 package io.wisetime.idea.branch;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
@@ -40,7 +39,7 @@ public class SubversionListener implements StartupActivity {
   }
 
   private void notifyBranchChanged(Project project, String branchName) {
-    final BranchHelper service = ServiceManager.getService(project, BranchHelper.class);
+    final BranchHelper service = project.getService(BranchHelper.class);
     if (service == null) {
       logger.warn("Failed to notify branch change");
       return;

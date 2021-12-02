@@ -1,11 +1,15 @@
 package io.wisetime.idea.branch;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.impl.PlatformFrameTitleBuilder;
+import io.wisetime.idea.branch.settings.SettingsState;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * To simplify QA on Windows, window title can be enabled:
+ * Help -> Edit Custom Properties -> ide.win.frame.decoration=false
+ */
 public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
   /**
@@ -15,7 +19,10 @@ public class WisetimeFrameTitleManager extends PlatformFrameTitleBuilder {
 
   @Override
   public String getProjectTitle(@NotNull Project project) {
-    final String currentBranch = Optional.ofNullable(ServiceManager.getService(project, BranchHelper.class))
+    if (!SettingsState.getInstance().appendToWindowTitle) {
+      return super.getProjectTitle(project);
+    }
+    final String currentBranch = Optional.ofNullable(project.getService(BranchHelper.class))
         .map(BranchHelper::getCurrentBranchName)
         // return empty string if branch name is unavailable
         .orElse("");
