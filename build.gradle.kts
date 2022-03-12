@@ -7,15 +7,15 @@ plugins {
 // TODO (TH) should be publisher company
 group = "org.jetbrains"
 
-version = "0.6.2"
+version = "1.0.0"
 
 repositories {
   mavenCentral()
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {

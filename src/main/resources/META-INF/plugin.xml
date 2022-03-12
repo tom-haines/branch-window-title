@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>io.wisetime.plugins.window.branch</id>
     <name>Branch in Window Title</name>
-    <version>0.6.2</version>
+    <version>1.0.0</version>
     <vendor>WiseTime</vendor>
 
     <description><![CDATA[
@@ -11,7 +11,7 @@
     ]]></description>
 
     <change-notes><![CDATA[
-      Version 0.6.2 - Support for custom frame decoration on Windows
+      Version 1.0.0 - Support for custom frame decoration on Windows
       Version 0.6.1 - Support IntelliJ IDEA 2020.1
       Version 0.6.0 - Improve stability with IntelliJ 2019.3.3+, Subversion support.<br>
       Version 0.5.5 - Improve logging output in event no git repository is located in project.<br>
@@ -22,7 +22,7 @@
     ]]>
     </change-notes>
 
-    <idea-version since-build="172.2103.15"/>
+    <idea-version since-build="203"/>
 
     <depends>com.intellij.modules.lang</depends>
     <depends optional="true" config-file="git-extension.xml">Git4Idea</depends>
