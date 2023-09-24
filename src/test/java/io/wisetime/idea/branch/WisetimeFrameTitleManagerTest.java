@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.intellij.openapi.project.Project;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author thomas.haines
