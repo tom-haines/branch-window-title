@@ -1,7 +1,10 @@
+import org.jetbrains.intellij.tasks.RunPluginVerifierTask
+import java.util.EnumSet
+
 plugins {
   java
   idea
-  id("org.jetbrains.intellij") version "1.15.0"
+  id("org.jetbrains.intellij") version "1.13.3"
 }
 
 group = "org.jetbrains"
@@ -30,6 +33,7 @@ intellij {
   version.set("2021.2.3")
   pluginName.set("branch-window-title")
   downloadSources.set(true)
+  updateSinceUntilBuild.set(false)
   // name defined in e.g. plugins/vcs-git/lib/vcs-git/META-INF/plugin.xml
   plugins.set(listOf("Git4Idea", "Subversion"))
 }
@@ -41,6 +45,19 @@ tasks.withType(JavaCompile::class.java) {
 
 tasks {
   test { useJUnitPlatform() }
+
+  runPluginVerifier {
+    // Test oldest supported, and latest
+    ideVersions.set(listOf("IC-2021.2.3", "IC-2023.2.2"))
+    failureLevel.set(
+      EnumSet.complementOf(
+        EnumSet.of(
+          // these are the only issues we tolerate
+          RunPluginVerifierTask.FailureLevel.DEPRECATED_API_USAGES,
+        )
+      )
+    )
+  }
 
   patchPluginXml {
     sinceBuild.set("${project.properties["pluginSinceBuild"]}")
