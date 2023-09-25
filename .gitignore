@@ -7,5 +7,4 @@ out
 .gradle
 .idea
 build
-gradle.properties
 !gradle-wrapper.jar

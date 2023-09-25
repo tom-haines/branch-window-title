@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class SettingsState implements PersistentStateComponent<SettingsState> {
 
   public boolean appendToWindowTitle = true;
-  public boolean appendToProjectName = IdeFrameDecorator.isCustomDecorationAvailable();
+  public boolean appendToProjectName = isCustomDecoratorAvailable();
 
   public static SettingsState getInstance() {
     return ApplicationManager.getApplication().getService(SettingsState.class);
@@ -37,5 +37,18 @@ public class SettingsState implements PersistentStateComponent<SettingsState> {
   @Override
   public void loadState(@NotNull SettingsState state) {
     XmlSerializerUtil.copyBean(state, this);
+    if (!isCustomDecoratorAvailable()) {
+      this.appendToProjectName = false;
+    }
   }
+
+  private boolean isCustomDecoratorAvailable() {
+    try {
+      return IdeFrameDecorator.isCustomDecorationAvailable();
+    } catch (NoSuchMethodError e) {
+      // ignore if method is unavailable
+      return false;
+    }
+  }
+
 }

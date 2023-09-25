@@ -7,6 +7,7 @@ import git4idea.GitLocalBranch;
 import git4idea.GitReference;
 import git4idea.branch.GitBranchUtil;
 import git4idea.repo.GitRepository;
+import git4idea.repo.GitRepositoryChangeListener;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,18 +17,19 @@ public class GitListener implements StartupActivity {
 
   @Override
   public void runActivity(@NotNull Project project) {
-    project.getMessageBus().connect().subscribe(GitRepository.GIT_REPO_CHANGE, repository -> {
+    GitRepositoryChangeListener chaneListener = repository -> {
       GitLocalBranch currentBranch = repository.getCurrentBranch();
       if (currentBranch != null) {
         notifyBranchChanged(repository.getProject(), currentBranch.getName());
       }
-    });
+    };
+
+    project.getMessageBus().connect().subscribe(GitRepository.GIT_REPO_CHANGE, chaneListener);
+
     Optional.ofNullable(GitBranchUtil.getCurrentRepository(project))
         .map(GitRepository::getCurrentBranch)
         .map(GitReference::getName)
-        .ifPresent(branchName -> {
-          notifyBranchChanged(project, branchName);
-        });
+        .ifPresent(branchName -> notifyBranchChanged(project, branchName));
   }
 
   private void notifyBranchChanged(Project project, String branchName) {
