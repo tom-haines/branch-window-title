@@ -31,10 +31,8 @@
     <depends optional="true" config-file="subversion-extension.xml">Subversion</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceInterface="com.intellij.openapi.wm.impl.FrameTitleBuilder"
-          serviceImplementation="io.wisetime.idea.branch.WisetimeFrameTitleManager" overrides="true" />
 
-        <projectService serviceImplementation="io.wisetime.idea.branch.BranchHelper" />
+        <titleInfoProvider implementation="io.wisetime.idea.branch.BranchTitleInfoProvider"/>
     </extensions>
 
 </idea-plugin>
